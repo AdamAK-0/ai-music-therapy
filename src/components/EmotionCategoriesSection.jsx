@@ -1,13 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import Calming from "../assets/calmingmusic.jpg";
+import StressRelief from "../assets/stressrelief.webp";
+import Focus from "../assets/focusmusic.jpeg";
+import Uplifting from "../assets/upliftingmusic.jpg";
+import Expressive from "../assets/expressivemusic.avif";
 
 const emotions = [
-  { name: "Calming", image: "https://via.placeholder.com/150/8FD3C8/FFFFFF?text=Calming" },
-  { name: "Stress Relief", image: "https://via.placeholder.com/150/FFB6B6/FFFFFF?text=Stress" },
-  { name: "Focus", image: "https://via.placeholder.com/150/5B6CFF/FFFFFF?text=Focus" },
-  { name: "Uplifting", image: "https://via.placeholder.com/150/FFD700/FFFFFF?text=Uplifting" },
-  { name: "Expressive", image: "https://via.placeholder.com/150/FF69B4/FFFFFF?text=Expressive" },
+  { name: "Calming", image: Calming},
+  { name: "Stress Relief", image: StressRelief },
+  { name: "Focus", image: Focus },
+  { name: "Uplifting", image: Uplifting},
+  { name: "Expressive", image: Expressive},
 ];
 
 
@@ -16,7 +21,7 @@ const EmotionCategoriesSection = () => {
   const { theme } = useTheme();
 
   const handleEmotionClick = (emotion) => {
-    navigate(`/create-session?mood=${emotion}`);
+    navigate(`/musics?category=${emotion}`);
   };
 
   // Light/Dark color scheme for music therapy
