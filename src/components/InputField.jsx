@@ -3,14 +3,13 @@ import { useTheme } from "../context/ThemeContext";
 
 export default function InputField({ label, type = "text", placeholder, value, onChange }) {
   const { theme } = useTheme();
-
-  // Theme-based styles
-  const labelColor = "#7a1f2a"; // keep original label color
-  const inputBg = theme === "dark" ? "#3a3a3a" : "#fff";
+// 🎵 MUSIC THEME COLORS
+  const labelColor = theme === "dark" ? "#c8f9f2" : "#1f2a7a";
+  const inputBg = theme === "dark" ? "#262626" : "#ffffff";
   const textColor = theme === "dark" ? "#e5e5e5" : "#444";
-  const borderColor = theme === "dark" ? "#555" : "#d5c9be";
-  const placeholderColor = theme === "dark" ? "#aaa" : "#b8b8b8";
-  const focusRing = "#7a1f2a";
+  const borderColor = theme === "dark" ? "#444" : "#d0e0ff";
+  const placeholderColor = theme === "dark" ? "#999" : "#9aa6c8";
+  const focusRing = theme === "dark" ? "#33f0e0" : "#1f2a7a";
 
   return (
     <div className="w-full mb-6 text-sm">

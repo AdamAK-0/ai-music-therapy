@@ -24,7 +24,8 @@ export default function SignUp() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const bgColor = theme === "dark" ? "#1e1e1e" : "#fff8f0";
+  const bgColor = theme === "dark" ? "#1a1a1a" : "#f5f7fa";
+
   const textColor = theme === "dark" ? "#ddd" : "#444";
 
   // redirect if authenticated

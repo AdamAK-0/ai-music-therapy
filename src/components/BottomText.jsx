@@ -4,9 +4,10 @@ import { useTheme } from "../context/ThemeContext";
 export default function BottomText({ textBefore, linkHref, linkText }) {
   const { theme } = useTheme();
 
-  const textColor = theme === "dark" ? "#ccc" : "#6b6b6b"; // main text
-  const linkColor = theme === "dark" ? "#e5a1a1" : "#7a1f2a"; // link color
   const linkHoverOpacity = theme === "dark" ? "opacity-90" : "opacity-80";
+   const textColor = theme === "dark" ? "#9ca3af" : "#6a6f85";
+  const linkColor = theme === "dark" ? "#33f0e0" : "#1f2a7a";
+  const hoverColor = theme === "dark" ? "#5ff7ec" : "#2f3fdc";
 
   return (
     <p

@@ -4,10 +4,12 @@ import { useTheme } from "../context/ThemeContext";
 export default function Checkbox({ checked, onChange }) {
   const { theme } = useTheme();
 
+  // 🎵 MUSIC THEME COLORS
   const textColor = theme === "dark" ? "#e5e5e5" : "#444";
-  const linkColor = "#7a1f2a";
-  const borderColor = linkColor;
-  const ringColor = linkColor;
+  const accentColor = theme === "dark" ? "#33f0e0" : "#1f2a7a";
+  const linkColor = theme === "dark" ? "#9ff5ea" : "#4b5bdc";
+  const borderColor = theme === "dark" ? "#555" : "#cfd8ff";
+
 
   return (
     <label
