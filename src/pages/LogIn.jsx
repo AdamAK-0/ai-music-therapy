@@ -21,7 +21,8 @@ export default function LogIn() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const bgColor = theme === "dark" ? "#2a2a2a" : "#fff8f0";
+  const bgColor = theme === "dark" ? "#1a1a1a" : "#f5f7fa";
+
 
   // backend root
   const API_ROOT = API_BASE_URL.replace("/api", "");

@@ -4,10 +4,10 @@ import { useTheme } from "../context/ThemeContext";
 export default function PrimaryButton({ text, disabled = false, type = "button" }) {
   const { theme } = useTheme();
 
-  const bgColor = "#7a1f2a";
-  const hoverColor = "#a02a3d";
-  const textColor = "#fff";
-  const darkHoverColor = "#8c2b3b";
+// 🎵 MUSIC-AI COLORS
+  const bgColor = theme === "dark" ? "#33f0e0" : "#1f2a7a";
+  const hoverColor = theme === "dark" ? "#5ff7ec" : "#2f3fdc";
+  const textColor = theme === "dark" ? "#0f172a" : "#ffffff";
 
   return (
     <button
