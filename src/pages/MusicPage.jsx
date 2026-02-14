@@ -33,7 +33,7 @@ const MusicPage = () => {
   useEffect(() => {
     async function fetchMusics() {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/musics`);
+        const response = await fetch(`${API_BASE_URL}/musics`);
         const data = await response.json();
         setMusics(data);
       } catch (err) {
