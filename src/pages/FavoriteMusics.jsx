@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../apiConfig";
+import FavImage from "../assets/top-image.png";
 
 function FavoriteMusics() {
   const [favorites, setFavorites] = useState([]);
@@ -130,7 +131,7 @@ function FavoriteMusics() {
         style={{ backgroundColor: sectionBg }}
       >
         <img
-          src="/music/top-image.jpg"
+          src={FavImage}
           className="absolute inset-0 w-full h-full object-cover opacity-35"
           alt=""
         />
