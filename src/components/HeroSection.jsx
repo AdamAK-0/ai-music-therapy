@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
-import musicVideo from "../assets/musicVideo.mp4"; // replace with your soothing video
+import musicVideo from "../assets/musicVideo_1.mp4"; // replace with your soothing video
 
 const HeroSection = () => {
   const navigate = useNavigate();
