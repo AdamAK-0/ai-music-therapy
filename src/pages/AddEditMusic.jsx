@@ -176,7 +176,7 @@ const AddEditMusic = () => {
         confirmButtonColor: "#1f2a7a",
       });
 
-      navigate("/music");
+      navigate("/musics");
     } catch (err) {
       Swal.fire({
         icon: "error",

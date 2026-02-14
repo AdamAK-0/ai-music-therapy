@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MusicCard from "./MusicCard"; // new component
 import { useTheme } from "../context/ThemeContext";
+import { API_BASE_URL } from "../apiConfig";
 
 const FeaturedMusic = () => {
   const { theme } = useTheme();
@@ -17,7 +18,7 @@ const FeaturedMusic = () => {
   useEffect(() => {
     async function fetchFeatured() {
       try {
-        const res = await fetch("https://your-backend.com/api/music/featured");
+        const res = await fetch(`${API_BASE_URL}/musics/featured`);
         const data = await res.json();
         setFeaturedMusic(data);
       } catch (err) {
