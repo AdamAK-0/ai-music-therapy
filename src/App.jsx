@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Splash from "./pages/splash";
 import Home from "./pages/Home";
 import "./App.css";
 import MusicPage from "./pages/MusicPage";
@@ -17,10 +18,11 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />{" "}
+        <Route path ="/" element={<Splash/>} />{" "}
+        <Route path="/home" element={<Home />} />
         <Route path="/musics" element={<MusicPage/>}/>
         <Route path="/musics/:id" element={<MusicDetails/>}/>
-        <Route path ="/add" element={<AddEditMusic/>}/>
+        <Route path ="/add-music" element={<AddEditMusic/>}/>
         <Route path ="/favorites" element={<FavoriteMusics/>}/>
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/sign-up" element={<SignUp/>}/>
