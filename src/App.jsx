@@ -9,6 +9,9 @@ import LogIn from "./pages/LogIn";
 import AddEditMusic from "./pages/AddEditMusic";
 import FavoriteMusics from "./pages/FavoriteMusics";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Profile from "./user-profile/Profile";
+import ProfileWrapper from "./user-profile/components/ProfileWrapper";
+import ChangePasswordForm from "./user-profile/components/ChangePasswordForm";
 
 export default function App() {
   return (
@@ -23,6 +26,10 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path ="/log-in" element ={<LogIn/>}/>
         <Route path ="/privacy" element ={<PrivacyPolicy/>}/>
+         <Route path="/profile" element={<Profile />}>
+          <Route path="user-info" element={<ProfileWrapper />} />
+          <Route path="password" element={<ChangePasswordForm />} />
+        </Route>
       </Routes>
     </Router>
   );

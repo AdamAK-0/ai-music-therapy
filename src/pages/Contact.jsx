@@ -24,7 +24,7 @@ export default function Contact() {
         <Box>
           <p className="leading-relaxed mb-4" style={{ color: textColor }}>
             We'd love to hear from you. Whether you have a new idea, feedback
-            on the site, or want to collaborate, the Music AI team is here for
+            on the site, or want to collaborate, the AI Music team is here for
             you. We read every message and typically reply within one business
             day.
           </p>
@@ -35,11 +35,11 @@ export default function Contact() {
                 Email:
               </span>{" "}
               <a
-                href="mailto:customerservice@musicai.co"
+                href="mailto:customerservice@aimusic.co"
                 className="underline hover:opacity-80 transition"
                 style={{ color: textColor }}
               >
-                customerservice@musicai.com
+                customerservice@aimusic.com
               </a>
             </p>
             <p>
