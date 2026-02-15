@@ -187,6 +187,55 @@ function MusicDetails() {
           />
         </div>
       </section>
+ <section className="py-8 text-center" style={{ backgroundColor: sectionBg }}>
+  <div className="flex justify-center gap-4 flex-wrap">
+
+    {/* SAVE (Favorite) - only for logged-in users */}
+    {user && (
+      <button
+        onClick={handleSave}
+        className="px-6 py-2 rounded-lg text-white"
+        style={{ backgroundColor: "#1f2a7a" }}
+      >
+        Save
+      </button>
+    )}
+
+    {/* SHARE - allowed for all users */}
+    <button
+      onClick={handleShare}
+      className="px-6 py-2 rounded-lg border"
+      style={{ color: "#1f2a7a", borderColor: "#1f2a7a" }}
+    >
+      Share
+    </button>
+
+    {/* EDIT & DELETE - only owner */}
+    {isOwner && (
+      <>
+        <button
+          onClick={() =>
+            navigate(`/add-music?title=${encodeURIComponent(music.title)}`)
+          }
+          className="px-6 py-2 rounded-lg border"
+          style={{ color: titleColor, borderColor: titleColor }}
+        >
+          Edit
+        </button>
+
+        <button
+          onClick={handleDelete}
+          className="px-6 py-2 rounded-lg border"
+          style={{ color: "#b91c1c", borderColor: "#b91c1c" }}
+        >
+          Delete
+        </button>
+      </>
+    )}
+
+  </div>
+</section>
+
 
       {/* WHY THIS TRACK HELPS */}
       {music.whyLove && (
@@ -298,7 +347,7 @@ function MusicDetails() {
             <button
               onClick={submitFeedback}
               className="px-6 py-2 mt-5 rounded-lg text-white"
-              style={{ backgroundColor: "#7a1f2a" }}
+              style={{ backgroundColor: "#1f2a7a" }}
             >
               Submit
             </button>
