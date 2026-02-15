@@ -91,12 +91,13 @@ export default function ChangePasswordForm() {
     }
   };
 
-  // Theme-based colors
-  const bgColor = theme === "dark" ? "#2a2a2a" : "#fff8f0";
-  const borderColor = theme === "dark" ? "#555" : "#ccc";
-  const textColor = theme === "dark" ? "#e5e5e5" : "#444";
-  const btnColor = "#7a1f2a";
-  const btnHover = "#5c161f";
+// Theme-based colors (Music Therapy)
+const bgColor = theme === "dark" ? "#1a1a1a" : "#fffdf9";      // section background
+const borderColor = theme === "dark" ? "#2f3a3a" : "#dde8e6"; // soft teal border
+const textColor = theme === "dark" ? "#e0f5f2" : "#444";      // calm readable text
+const btnColor = "#1f2a7a";                                  // deep calming blue
+const btnHover = "#16205c";                                  // darker hover
+
 
   return (
     <form
@@ -108,7 +109,7 @@ export default function ChangePasswordForm() {
         color: textColor,
       }}
     >
-      <h1 className="text-2xl font-semibold mb-2 text-[#7a1f2a]">
+      <h1 className="text-2xl font-semibold mb-2 text-[#1f2a7a]">
         Change Your Password
       </h1>
 

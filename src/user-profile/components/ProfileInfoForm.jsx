@@ -102,12 +102,15 @@ export default function ProfileInfoForm() {
     }
   };
 
-  // Theme-based styles
-  const inputBg = theme === "dark" ? "#3a3a3a" : "#f3f3f3";
-  const textColor = theme === "dark" ? "#e5e5e5" : "#444";
-  const borderColor = theme === "dark" ? "#555" : "#ccc";
-  const btnBg = theme === "dark" ? "#7a1f2a" : "#7a1f2a";
-  const btnHover = theme === "dark" ? "#5c161f" : "#5c161f";
+ // Theme-based styles (Music Therapy)
+const inputBg = theme === "dark" ? "#232a36" : "#f6f8fc";     // deep calm blue / airy light
+const textColor = theme === "dark" ? "#e0f5f2" : "#444";     // soft readable text
+const borderColor = theme === "dark" ? "#2e3a4d" : "#dde4f0";// subtle blue-gray border
+
+// Primary action button (keep strong but elegant)
+const btnBg = "#1f2a7a";                                     // calming deep blue
+const btnHover = "#16205c";                                  // darker hover
+
 
   const isFormDirty =
     currentName !== user.name ||
@@ -122,7 +125,7 @@ export default function ProfileInfoForm() {
       style={{ color: textColor }}
       onSubmit={handleSubmit}
     >
-      <h1 className="text-2xl font-semibold mb-0" style={{ color: "#7a1f2a" }}>
+      <h1 className="text-2xl font-semibold mb-0" style={{ color: "#1f2a7a" }}>
         Profile
       </h1>
       <p
