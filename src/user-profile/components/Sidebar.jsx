@@ -56,12 +56,18 @@ export default function Sidebar({ children }) {
   const { theme } = useTheme();
   const pathname = window.location.pathname;
 
-  const pageBg = theme === "dark" ? "#2a2a2a" : "#fff8f0"; // cream background
-  const sidebarBg = theme === "dark" ? "#1f1f1f" : "#fff"; // sidebar white
-  const mainBg = theme === "dark" ? "#2a2a2a" : "#fff"; // main content white
-  const linkText = theme === "dark" ? "text-gray-400" : "text-gray-500";
-  const activeBg = "#7a1f2a";
-  const activeText = "text-white";
+// Theme-based layout colors (Music Therapy)
+const pageBg = theme === "dark" ? "#121826" : "#f7f9fc";      // deep night blue / soft cloud
+const sidebarBg = theme === "dark" ? "#1a2238" : "#ffffff";  // calm navy / clean white
+const mainBg = theme === "dark" ? "#162036" : "#ffffff";     // focused listening area
+
+// Navigation
+const linkText = theme === "dark" ? "text-blue-300" : "text-gray-500";
+
+// Active state (calm confidence, not danger-red)
+const activeBg = "#1f2a7a";                                  // signature music blue
+const activeText = "text-white";
+
 
   return (
     <div
@@ -94,7 +100,7 @@ export default function Sidebar({ children }) {
                     className={`flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
                       active
                         ? `${activeText} bg-[${activeBg}]`
-                        : `${linkText} hover:bg-[#7a1f2a]/10 hover:text-[#7a1f2a]`
+                        : `${linkText} hover:bg-[#1f2a7a]/10 hover:text-[#1f2a7a]`
                     }`}
                     style={active ? { backgroundColor: activeBg } : {}}
                   >

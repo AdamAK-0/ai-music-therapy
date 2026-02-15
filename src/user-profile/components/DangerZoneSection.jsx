@@ -47,14 +47,17 @@ export default function DangerZoneSection() {
     }
   };
 
-  // Theme-based colors
-  const sectionBg = theme === "dark" ? "#2a2a2a" : "#fff8f0";
-  const sectionBorder = theme === "dark" ? "#555" : "#ccc";
-  const textColor = theme === "dark" ? "#e5e5e5" : "#444";
-  const subTextColor = theme === "dark" ? "#aaa" : "#666";
-  const dangerBtnBg = theme === "dark" ? "#7a1f2a" : "#7a1f2a";
-  const dangerBtnHover = theme === "dark" ? "#5c161f" : "#5c161f";
-  const btnDisabledBg = theme === "dark" ? "#4a131b" : "#4a131b";
+// Theme-based colors (Music Therapy)
+const sectionBg = theme === "dark" ? "#1a1f2b" : "#fffdf9";      // deep calm blue / soft off-white
+const sectionBorder = theme === "dark" ? "#2e3a4d" : "#dde4f0"; // subtle blue-gray
+const textColor = theme === "dark" ? "#e0f5f2" : "#444";        // soft readable
+const subTextColor = theme === "dark" ? "#9fbfbc" : "#666";     // muted calm text
+
+// Danger buttons (keep noticeable but not aggressive)
+const dangerBtnBg = "#7a1f2a";                                  // same red tone
+const dangerBtnHover = "#5c161f";
+const btnDisabledBg = theme === "dark" ? "#3a3f4d" : "#cfd6e3"; // neutral disabled
+
 
   return (
     <section
