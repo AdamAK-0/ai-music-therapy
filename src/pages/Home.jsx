@@ -5,7 +5,7 @@ import FeaturedMusic from "../components/FeaturedMusic";
 import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
 import MusicGeneratorSection from "../components/MusicGeneratorSection";
-import MusicNewsletterSection from "../components/MusicNewsLetterSection";
+import MusicNewsLetterSection from "../components/MusicNewsLetterSection";
 const Home = () => (
   <>
   <Header/>
@@ -13,7 +13,7 @@ const Home = () => (
   <FeaturedMusic/>
   <EmotionCategoriesSection />
   <MusicGeneratorSection/>
-  <MusicNewsletterSection/>
+  <MusicNewsLetterSection/>
   <Footer/>
   </>
 );
