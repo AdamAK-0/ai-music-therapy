@@ -34,7 +34,7 @@ export default function SignedInHeader({ user }) {
     { name: "Music", href: "/musics" }, //  -> Music
     { name: "Add Music", href: "/add-music" },
     { name: "Favorites", href: "/favorites" },
-    { name: "AI Generator", href: "/ai-generator" },
+    { name: "AI Generator", href: "/generate" },
     { name: "Contact", href: "/contact" },
   ];
 

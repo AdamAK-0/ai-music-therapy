@@ -10,6 +10,7 @@ import LogIn from "./pages/LogIn";
 import AddEditMusic from "./pages/AddEditMusic";
 import FavoriteMusics from "./pages/FavoriteMusics";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import GenerateMusicPage from "./pages/GenerateMusicPage";
 import Profile from "./user-profile/Profile";
 import ProfileWrapper from "./user-profile/components/ProfileWrapper";
 import ChangePasswordForm from "./user-profile/components/ChangePasswordForm";
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/musics/:id" element={<MusicDetails/>}/>
         <Route path ="/add-music" element={<AddEditMusic/>}/>
         <Route path ="/favorites" element={<FavoriteMusics/>}/>
+        <Route path="/generate" element={<GenerateMusicPage />} />
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/sign-up" element={<SignUp/>}/>
         <Route path ="/log-in" element ={<LogIn/>}/>

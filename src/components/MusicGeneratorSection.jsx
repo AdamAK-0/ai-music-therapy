@@ -14,7 +14,7 @@ const MusicGeneratorSection = () => {
   const buttonHover = theme === "dark" ? "#3f7acc" : "#3f7acc"; // button hover
 
   const handleGenerate = () => {
-    navigate("/generate-music"); // Leads to AI music generator page
+    navigate("/generate"); // Leads to AI music generator page
   };
 
   return (
