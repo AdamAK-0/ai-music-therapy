@@ -107,4 +107,4 @@ const MusicNewsletterSection = () => {
   );
 };
 
-export default MusicNewsletterSection;
+export default MusicNewsLetterSection;
