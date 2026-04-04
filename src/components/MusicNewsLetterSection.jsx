@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { API_BASE_URL } from "../apiConfig";
 
-const MusicNewsletterSection = () => {
+const MusicNewsLetterSection = () => {
   const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(""); // "success", "error", or ""
