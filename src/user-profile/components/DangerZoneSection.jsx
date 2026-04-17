@@ -4,6 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import { API_BASE_URL } from "../../apiConfig";
 import trashIcon from "../../assets/trash-icon.svg";
+import { authFetch, clearAuthToken } from "../../authToken";
 
 export default function DangerZoneSection() {
   const { theme, showToast } = useTheme();
@@ -24,9 +25,8 @@ export default function DangerZoneSection() {
     setIsDeleting(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/users/profile`, {
+      const res = await authFetch(`${API_BASE_URL}/users/profile`, {
         method: "DELETE",
-        credentials: "include",
       });
 
       if (!res.ok) {
@@ -34,6 +34,7 @@ export default function DangerZoneSection() {
         throw new Error(errorData.error || "Failed to delete account.");
       }
 
+      clearAuthToken();
       setUser(null);
 
       alert("Your account has been successfully deleted.");

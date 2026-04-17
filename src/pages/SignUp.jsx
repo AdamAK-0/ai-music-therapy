@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../apiConfig.js";
+import { authFetch, setAuthToken } from "../authToken";
 
 import Title from "../components/Title.jsx";
 import Box from "../components/Box.jsx";
@@ -32,9 +33,7 @@ export default function SignUp() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/auth/check`, {
-          credentials: "include", // include cookies so backend can read jwt
-        });
+        const res = await authFetch(`${API_BASE_URL}/auth/check`);
 
         if (!res.ok) return;
         const data = await res.json();
@@ -78,6 +77,7 @@ export default function SignUp() {
         return;
       }
 
+      setAuthToken(data.token);
       setUser(data.user);
 
       window.alert("Account created successfully!");

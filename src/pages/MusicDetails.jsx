@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../apiConfig";
+import { authFetch } from "../authToken";
 
 function MusicDetails() {
   const { id } = useParams();
@@ -74,9 +75,9 @@ function MusicDetails() {
     if (!user)
       return Swal.fire({ icon: "info", title: "Log in to save tracks" });
 
-    const res = await fetch(
+    const res = await authFetch(
       `${API_BASE_URL}/favorites/${encodeURIComponent(music.title)}`,
-      { method: "POST", credentials: "include" }
+      { method: "POST" }
     );
 
     if (!res.ok) return Swal.fire({ icon: "error", title: "Error saving track" });
@@ -109,9 +110,9 @@ function MusicDetails() {
     }).then(async (result) => {
       if (!result.isConfirmed) return;
 
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BASE_URL}/musics/${encodeURIComponent(music.title)}`,
-        { method: "DELETE", credentials: "include" }
+        { method: "DELETE" }
       );
 
       if (!res.ok) return Swal.fire({ icon: "error", title: "Failed to delete" });
@@ -127,9 +128,8 @@ function MusicDetails() {
     if (!feedback && rating === 0)
       return Swal.fire({ icon: "warning", title: "Add rating or comment" });
 
-    const res = await fetch(`${API_BASE_URL}/comments/${music.title}`, {
+    const res = await authFetch(`${API_BASE_URL}/comments/${music.title}`, {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ rating, comment: feedback }),
     });

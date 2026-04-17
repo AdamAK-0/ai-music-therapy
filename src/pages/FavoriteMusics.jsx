@@ -7,6 +7,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../apiConfig";
 import FavImage from "../assets/top-image.png";
+import { authFetch } from "../authToken";
 
 function FavoriteMusics() {
   const [favorites, setFavorites] = useState([]);
@@ -46,9 +47,7 @@ function FavoriteMusics() {
 
     const loadFavorites = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/favorites`, {
-          credentials: "include",
-        });
+        const res = await authFetch(`${API_BASE_URL}/favorites`);
 
         if (!res.ok) return;
 
@@ -74,11 +73,10 @@ function FavoriteMusics() {
   /* ❌ REMOVE FROM FAVORITES */
   const handleDelete = async (title) => {
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BASE_URL}/favorites/${encodeURIComponent(title)}`,
         {
           method: "DELETE",
-          credentials: "include",
         }
       );
 

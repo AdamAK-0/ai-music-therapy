@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { API_BASE_URL } from "../apiConfig.js";
 import { useAuth } from "../context/AuthContext";
+import { authFetch, setAuthToken } from "../authToken";
 
 import Title from "../components/Title.jsx";
 import Box from "../components/Box.jsx";
@@ -31,9 +32,7 @@ export default function LogIn() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/auth/check`, {
-          credentials: "include", // include cookies so backend can read jwt
-        });
+        const res = await authFetch(`${API_BASE_URL}/auth/check`);
 
         if (!res.ok) return;
         const data = await res.json();
@@ -71,6 +70,7 @@ export default function LogIn() {
         return;
       }
 
+      setAuthToken(data.token);
       setUser(data.user);
       window.alert(`Welcome back, ${data.user.name}!`);
       navigate("/home");

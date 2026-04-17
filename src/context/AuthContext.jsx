@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { API_BASE_URL } from "../apiConfig";
+import { authFetch, clearAuthToken } from "../authToken";
 
 const AuthContext = createContext();
 
@@ -10,19 +11,20 @@ export const AuthProvider = ({ children }) => {
   // 1. Function to check authentication status
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/check`, {
+      const response = await authFetch(`${API_BASE_URL}/auth/check`, {
         method: "GET",
-        credentials: "include",
       });
       const data = await response.json();
 
       if (response.ok && data.authenticated) {
         setUser(data.user);
       } else {
+        clearAuthToken();
         setUser(null);
       }
     } catch (error) {
       console.error("Error checking auth status:", error);
+      clearAuthToken();
       setUser(null);
     } finally {
       setLoading(false);
@@ -36,13 +38,15 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
-      await fetch(`${API_BASE_URL}/auth/logout`, {
+      await authFetch(`${API_BASE_URL}/auth/logout`, {
         method: "POST",
-        credentials: "include",
       });
+      clearAuthToken();
       setUser(null); // clear local state immediately
     } catch (error) {
       console.error("Logout failed:", error);
+      clearAuthToken();
+      setUser(null);
     }
   };
 
