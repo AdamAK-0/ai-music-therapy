@@ -62,6 +62,7 @@ const GenerateMusicPage = () => {
   const latestPromptRef = useRef("");
   const emotionRef = useRef(null);
   const detectedEmotionRef = useRef(null);
+  const detectedPromptRef = useRef("");
   const requestInFlightRef = useRef(false);
   const hasStartedPlaybackRef = useRef(false);
   const expectedChunkSizeRef = useRef(SERVER_CHUNK_SIZE_HINT);
@@ -115,15 +116,9 @@ const GenerateMusicPage = () => {
       expectedChunkSizeRef.current =
         incomingNotes.length || expectedChunkSizeRef.current;
 
-      if (emotionRef.current && emotionRef.current !== data.emotion) {
-        bufferRef.current = bufferRef.current.slice(-2);
-      }
-
-      if (data.emotion) {
-        emotionRef.current = data.emotion;
-        detectedEmotionRef.current = data.emotion;
-        setEmotion(data.emotion);
-      }
+      // Emotion state is owned only by the emotion detector server.
+      // The music generator may echo/debug an internal emotion, but it must not
+      // change the UI emotion or the next requested emotion.
 
       serverNoteMemoryRef.current = [
         ...serverNoteMemoryRef.current,
@@ -172,6 +167,7 @@ const GenerateMusicPage = () => {
       if (!isGeneratingRef.current) {
         setEmotion(null);
         setEmotionStatus("idle");
+        detectedPromptRef.current = "";
       }
       return;
     }
@@ -280,6 +276,7 @@ const GenerateMusicPage = () => {
       const detected = data.emotion || null;
       if (detected) {
         detectedEmotionRef.current = detected;
+        detectedPromptRef.current = cleanText;
         emotionRef.current = detected;
         setEmotion(detected);
         setEmotionStatus("ready");
@@ -429,8 +426,11 @@ const GenerateMusicPage = () => {
 
     latestPromptRef.current = prompt;
 
+    const cleanPrompt = prompt.trim();
     const detectedEmotion =
-      detectedEmotionRef.current || (await detectPromptEmotion(prompt, { silent: true }));
+      detectedPromptRef.current === cleanPrompt
+        ? detectedEmotionRef.current
+        : await detectPromptEmotion(cleanPrompt, { silent: true });
 
     await Tone.start();
 
@@ -455,7 +455,7 @@ const GenerateMusicPage = () => {
     }).toDestination();
 
     socketRef.current.emit("start_music", {
-      user_text: prompt,
+      user_text: cleanPrompt,
       emotion: detectedEmotion,
       chunk_size: SERVER_CHUNK_SIZE_HINT,
     });
