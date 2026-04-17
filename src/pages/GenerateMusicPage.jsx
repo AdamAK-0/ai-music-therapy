@@ -11,9 +11,10 @@ import { API_PYTHON_URL, API_EMOTION_URL } from "../apiConfig";
 const NOTE_SPACING = 0.25;
 const INITIAL_BUFFER_CHUNKS = 1;
 const FALLBACK_BATCH_SIZE = 8;
-const MIN_BUFFER_NOTES = 10;
-const SERVER_CHUNK_SIZE_HINT = 16;
+const MIN_BUFFER_NOTES = 8;
+const SERVER_CHUNK_SIZE_HINT = 8;
 const EMOTION_DEBOUNCE_MS = 3000;
+const STARTUP_FALLBACK_MS = 2500;
 
 const EMOTION_RANGES = {
   relax: [48, 76],
@@ -69,6 +70,7 @@ const GenerateMusicPage = () => {
   const fallbackCursorRef = useRef(0);
   const fallbackCycleRef = useRef(0);
   const fallbackTimeoutRef = useRef(null);
+  const startupFallbackTimeoutRef = useRef(null);
   const requestTimeoutRef = useRef(null);
   const emotionDebounceRef = useRef(null);
   const emotionAbortRef = useRef(null);
@@ -105,6 +107,11 @@ const GenerateMusicPage = () => {
 
       if (incomingNotes.length === 0) return;
 
+      if (startupFallbackTimeoutRef.current) {
+        clearTimeout(startupFallbackTimeoutRef.current);
+        startupFallbackTimeoutRef.current = null;
+      }
+
       expectedChunkSizeRef.current =
         incomingNotes.length || expectedChunkSizeRef.current;
 
@@ -131,11 +138,13 @@ const GenerateMusicPage = () => {
         if (bufferRef.current.length >= neededNotes) {
           hasStartedPlaybackRef.current = true;
           currentTimeRef.current = Tone.now() + 0.15;
+          setLoading(false);
           playFromBuffer();
         } else {
           requestMoreNotes();
         }
       } else {
+        setLoading(false);
         playFromBuffer();
       }
     });
@@ -144,6 +153,7 @@ const GenerateMusicPage = () => {
       console.error("Server error:", data);
       setError(data?.message || "Unknown server error");
       requestInFlightRef.current = false;
+      setLoading(false);
     });
 
     return () => {
@@ -178,10 +188,14 @@ const GenerateMusicPage = () => {
 
   const clearTimers = () => {
     if (fallbackTimeoutRef.current) clearTimeout(fallbackTimeoutRef.current);
+    if (startupFallbackTimeoutRef.current) {
+      clearTimeout(startupFallbackTimeoutRef.current);
+    }
     if (requestTimeoutRef.current) clearTimeout(requestTimeoutRef.current);
     if (emotionDebounceRef.current) clearTimeout(emotionDebounceRef.current);
 
     fallbackTimeoutRef.current = null;
+    startupFallbackTimeoutRef.current = null;
     requestTimeoutRef.current = null;
     emotionDebounceRef.current = null;
   };
@@ -359,6 +373,18 @@ const GenerateMusicPage = () => {
     return result;
   };
 
+  const startPlaybackFromFallback = () => {
+    if (!isGeneratingRef.current || hasStartedPlaybackRef.current) return;
+
+    const fallbackNotes = generateFallbackNotes(FALLBACK_BATCH_SIZE);
+    bufferRef.current.push(...fallbackNotes);
+    hasStartedPlaybackRef.current = true;
+    currentTimeRef.current = Tone.now() + 0.15;
+    setLoading(false);
+    playFromBuffer();
+    requestMoreNotes({ force: true });
+  };
+
   const scheduleFallbackIfNeeded = () => {
     if (!isGeneratingRef.current) return;
     if (!hasStartedPlaybackRef.current) return;
@@ -431,9 +457,13 @@ const GenerateMusicPage = () => {
     socketRef.current.emit("start_music", {
       user_text: prompt,
       emotion: detectedEmotion,
+      chunk_size: SERVER_CHUNK_SIZE_HINT,
     });
 
-    setLoading(false);
+    startupFallbackTimeoutRef.current = setTimeout(
+      startPlaybackFromFallback,
+      STARTUP_FALLBACK_MS
+    );
   };
 
   const requestMoreNotes = (options = {}) => {
@@ -445,6 +475,7 @@ const GenerateMusicPage = () => {
     socketRef.current.emit("request_more", {
       user_text: latestPromptRef.current,
       emotion: getCurrentEmotion(),
+      chunk_size: SERVER_CHUNK_SIZE_HINT,
     });
   };
 
