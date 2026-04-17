@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { API_BASE_URL } from "../../apiConfig";
 import eyeOpenIcon from "../../assets/eye-open.svg";
 import eyeClosedIcon from "../../assets/eye-closed.svg";
+import { authFetch, clearAuthToken } from "../../authToken";
 
 export default function ChangePasswordForm() {
   const { theme } = useTheme();
@@ -58,10 +59,9 @@ export default function ChangePasswordForm() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/users/password`, {
+      const res = await authFetch(`${API_BASE_URL}/users/password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ currentPassword, newPassword }),
       });
 
@@ -73,6 +73,7 @@ export default function ChangePasswordForm() {
 
       setSuccess(data.message);
 
+      clearAuthToken();
       setUser(null);
       setPasswords({
         currentPassword: "",

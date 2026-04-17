@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import profileIcon from "../../assets/profile-icon.svg";
 import uploadIcon from "../../assets/upload-icon.svg";
 import { API_BASE_URL } from "../../apiConfig";
+import { authFetch } from "../../authToken";
 
 function getServerRoot(baseUrl) {
   return baseUrl.replace(/\/api$/, "");
@@ -77,9 +78,8 @@ export default function ProfileInfoForm() {
         formData.append("profilePicture", profileFile);
       }
 
-      const res = await fetch(`${API_BASE_URL}/users/profile`, {
+      const res = await authFetch(`${API_BASE_URL}/users/profile`, {
         method: "PUT",
-        credentials: "include",
         body: formData,
       });
 

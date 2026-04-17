@@ -6,6 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../apiConfig";
+import { authFetch } from "../authToken";
 
 const AddEditMusic = () => {
   const { theme } = useTheme();
@@ -64,9 +65,8 @@ const AddEditMusic = () => {
 
     const loadMusic = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE_URL}/music/${encodeURIComponent(editingTitle)}`,
-          { credentials: "include" }
+        const res = await authFetch(
+          `${API_BASE_URL}/music/${encodeURIComponent(editingTitle)}`
         );
         if (!res.ok) return;
 
@@ -157,14 +157,13 @@ const AddEditMusic = () => {
       if (coverFile) fd.append("cover", coverFile);
       extraImages.forEach((img) => fd.append("images", img));
 
-      const res = await fetch(
+      const res = await authFetch(
         editingTitle
           ? `${API_BASE_URL}/music/${encodeURIComponent(editingTitle)}`
           : `${API_BASE_URL}/music`,
         {
           method: editingTitle ? "PUT" : "POST",
           body: fd,
-          credentials: "include",
         }
       );
 
