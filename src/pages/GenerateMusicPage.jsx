@@ -1188,12 +1188,8 @@ const GenerateMusicPage = () => {
             border: `1px solid ${cardBorder}`,
           }}
         >
-          <div className="overflow-x-auto pb-2">
-            <PianoRoll notes={notes} emotion={emotion} />
-          </div>
-          <div className="overflow-x-auto pb-3">
-            <PianoKeyboard activeNote={activeNote} emotion={emotion} />
-          </div>
+          <PianoRoll notes={notes} emotion={emotion} />
+          <PianoKeyboard activeNote={activeNote} emotion={emotion} />
         </div>
 
         {error && (

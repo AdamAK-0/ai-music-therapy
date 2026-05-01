@@ -108,7 +108,7 @@ function FavoriteMusics() {
   };
 
   const handleCardClick = (title) => {
-    navigate(`/music/${encodeURIComponent(title)}`);
+    navigate(`/musics/${encodeURIComponent(title)}`);
   };
 
   /* 🎨 MUSIC THEME */
