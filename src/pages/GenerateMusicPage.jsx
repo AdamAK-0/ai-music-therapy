@@ -3,6 +3,8 @@ import { io } from "socket.io-client";
 import {
   Activity,
   Gauge,
+  Mic,
+  MicOff,
   Music2,
   Radio,
   Sparkles,
@@ -115,6 +117,18 @@ const statusLabels = {
   composing: "Composing full therapy clip...",
 };
 
+const getSpeechRecognition = () => {
+  if (typeof window === "undefined") return null;
+  return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+};
+
+const mergeSpeechPrompt = (base, addition) =>
+  [base, addition]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+/g, " ");
+
 const GenerateMusicPage = () => {
   const { theme } = useTheme();
   const [prompt, setPrompt] = useState("");
@@ -126,6 +140,9 @@ const GenerateMusicPage = () => {
   const [activeNote, setActiveNote] = useState(null);
   const [selectedModelId, setSelectedModelId] = useState("classic-live");
   const [modelStatus, setModelStatus] = useState("idle");
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechStatus, setSpeechStatus] = useState("");
 
   const selectedModel = useMemo(
     () =>
@@ -161,10 +178,149 @@ const GenerateMusicPage = () => {
   const emotionAbortRef = useRef(null);
   const emotionRequestIdRef = useRef(0);
   const scheduledVisualTimersRef = useRef([]);
+  const recognitionRef = useRef(null);
+  const speechBasePromptRef = useRef("");
+  const recognitionHadErrorRef = useRef(false);
+  const lastSpeechTranscriptRef = useRef("");
+  const shouldKeepListeningRef = useRef(false);
+  const speechStopRequestedRef = useRef(false);
+  const speechRestartTimerRef = useRef(null);
+
+  const commitSpeechTranscript = (message = "Voice added to prompt.") => {
+    const transcript = lastSpeechTranscriptRef.current.trim();
+
+    if (!transcript) {
+      setSpeechStatus("No speech detected. Try again.");
+      return false;
+    }
+
+    const nextPrompt = mergeSpeechPrompt(speechBasePromptRef.current, transcript);
+    setPrompt(nextPrompt);
+    latestPromptRef.current = nextPrompt;
+    speechBasePromptRef.current = nextPrompt;
+    lastSpeechTranscriptRef.current = "";
+    setSpeechStatus(message);
+    return true;
+  };
+
+  const clearSpeechRestartTimer = () => {
+    if (!speechRestartTimerRef.current) return;
+    clearTimeout(speechRestartTimerRef.current);
+    speechRestartTimerRef.current = null;
+  };
 
   useEffect(() => {
     selectedModelRef.current = selectedModel;
   }, [selectedModel]);
+
+  useEffect(() => {
+    const Recognition = getSpeechRecognition();
+    setSpeechSupported(Boolean(Recognition));
+
+    if (!Recognition) return undefined;
+
+    const recognition = new Recognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = navigator.language || "en-US";
+
+    recognition.onstart = () => {
+      recognitionHadErrorRef.current = false;
+      clearSpeechRestartTimer();
+      lastSpeechTranscriptRef.current = "";
+      setIsListening(true);
+      setSpeechStatus("Listening...");
+    };
+
+    recognition.onend = () => {
+      if (speechStopRequestedRef.current || !shouldKeepListeningRef.current) {
+        speechStopRequestedRef.current = false;
+        shouldKeepListeningRef.current = false;
+        setIsListening(false);
+        if (!recognitionHadErrorRef.current) commitSpeechTranscript();
+        return;
+      }
+
+      if (lastSpeechTranscriptRef.current.trim()) {
+        commitSpeechTranscript("Voice added. Keep talking or tap Stop Voice.");
+      } else {
+        setSpeechStatus("Still listening. Speak near your microphone.");
+      }
+
+      speechRestartTimerRef.current = setTimeout(() => {
+        try {
+          recognition.start();
+        } catch (err) {
+          if (err.name !== "InvalidStateError") {
+            shouldKeepListeningRef.current = false;
+            setIsListening(false);
+            setSpeechStatus("Voice input could not restart.");
+          }
+        }
+      }, 350);
+    };
+
+    recognition.onerror = (event) => {
+      if (event.error === "no-speech") {
+        setSpeechStatus("No speech detected yet. Still listening...");
+        return;
+      }
+
+      if (event.error === "aborted" && speechStopRequestedRef.current) {
+        return;
+      }
+
+      recognitionHadErrorRef.current = true;
+      shouldKeepListeningRef.current = false;
+      clearSpeechRestartTimer();
+      setIsListening(false);
+
+      const speechErrorMessages = {
+        "audio-capture": "No microphone was found. Check your input device.",
+        network: "Speech recognition service is unavailable.",
+        "not-allowed": "Microphone access blocked.",
+        "service-not-allowed": "Speech recognition is blocked in this browser.",
+        "language-not-supported": "Speech recognition does not support this language.",
+      };
+
+      setSpeechStatus(
+        speechErrorMessages[event.error] || `Voice input stopped: ${event.error}.`
+      );
+    };
+
+    recognition.onresult = (event) => {
+      const transcriptParts = [];
+
+      for (let i = 0; i < event.results.length; i += 1) {
+        const transcript = event.results[i][0]?.transcript || "";
+        if (transcript.trim()) transcriptParts.push(transcript);
+      }
+
+      const transcript = transcriptParts.join(" ").trim();
+      lastSpeechTranscriptRef.current = transcript;
+      const nextPrompt = mergeSpeechPrompt(speechBasePromptRef.current, transcript);
+      setPrompt(nextPrompt);
+      latestPromptRef.current = nextPrompt;
+      setSpeechStatus("Listening... speech detected");
+    };
+
+    recognitionRef.current = recognition;
+
+    return () => {
+      recognition.onstart = null;
+      recognition.onend = null;
+      recognition.onerror = null;
+      recognition.onresult = null;
+      try {
+        clearSpeechRestartTimer();
+        shouldKeepListeningRef.current = false;
+        recognition.stop();
+      } catch {
+        // Ignore cleanup errors when recognition is already inactive.
+      }
+      recognitionRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     latestPromptRef.current = prompt;
@@ -903,6 +1059,10 @@ const GenerateMusicPage = () => {
     const cleanPrompt = prompt.trim();
     if (!cleanPrompt) return;
 
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+    }
+
     setLoading(true);
     setError(null);
     resetPlaybackState();
@@ -955,6 +1115,48 @@ const GenerateMusicPage = () => {
     const newText = e.target.value;
     setPrompt(newText);
     latestPromptRef.current = newText;
+    if (isListening) speechBasePromptRef.current = newText.trim();
+  };
+
+  const toggleSpeechInput = () => {
+    const recognition = recognitionRef.current;
+
+    if (!recognition) {
+      setSpeechStatus("Voice input is unavailable in this browser.");
+      return;
+    }
+
+    if (isListening) {
+      speechStopRequestedRef.current = true;
+      shouldKeepListeningRef.current = false;
+      clearSpeechRestartTimer();
+
+      try {
+        recognition.stop();
+      } catch {
+        setIsListening(false);
+        commitSpeechTranscript();
+      }
+      return;
+    }
+
+    speechBasePromptRef.current = prompt.trim();
+    lastSpeechTranscriptRef.current = "";
+    recognitionHadErrorRef.current = false;
+    speechStopRequestedRef.current = false;
+    shouldKeepListeningRef.current = true;
+    setSpeechStatus("");
+    setIsListening(true);
+
+    try {
+      recognition.start();
+    } catch (err) {
+      shouldKeepListeningRef.current = false;
+      setIsListening(false);
+      if (err.name !== "InvalidStateError") {
+        setSpeechStatus("Voice input could not start.");
+      }
+    }
   };
 
   const handleModelSelect = (modelId) => {
@@ -1128,7 +1330,7 @@ const GenerateMusicPage = () => {
             value={prompt}
             onChange={handlePromptChange}
             placeholder="Describe how you feel..."
-            className="w-full p-4 rounded-lg mb-4 text-lg outline-none transition-shadow"
+            className="w-full p-4 rounded-lg mb-3 text-lg outline-none transition-shadow"
             style={{
               backgroundColor: inputBg,
               border: `1px solid ${inputBorder}`,
@@ -1137,6 +1339,33 @@ const GenerateMusicPage = () => {
               resize: "vertical",
             }}
           />
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div className="min-h-[20px] text-sm" style={{ color: mutedText }}>
+              {speechStatus}
+            </div>
+            <button
+              type="button"
+              onClick={toggleSpeechInput}
+              disabled={!speechSupported}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: isListening ? "#ef4444" : `${selectedModel.accent}1f`,
+                color: isListening ? "#fff" : selectedModel.accent,
+                border: `1px solid ${isListening ? "#ef4444" : selectedModel.accent}`,
+              }}
+              title={
+                speechSupported
+                  ? isListening
+                    ? "Stop voice input"
+                    : "Start voice input"
+                  : "Voice input is unavailable in this browser"
+              }
+            >
+              {isListening ? <MicOff size={17} /> : <Mic size={17} />}
+              {isListening ? "Stop Voice" : "Voice"}
+            </button>
+          </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="min-h-[22px] text-sm" style={{ color: mutedText }}>
